@@ -448,14 +448,24 @@ public class LocalIndex implements Index {
                 return m_latestSegments.size();
             }
 
+
             public Segment findOrCreateNextSegment(long segmentId) throws IOException {
+                Segment segment = getNextSegment(segmentId);
+                setNextSegment(segmentId, segment);
+                return segment;
+            }
+
+            private Segment getNextSegment(long segmentId) throws IOException {
                 Segment segment = m_latestSegments.get(segmentId);
                 if (segment == null) {
                     if (segmentId > m_maxSegmentId) {
                         segment = new Segment(m_indexChannel, segmentId * SEGMENT_SIZE);
                     }
                 }
+                return segment;
+            }
 
+            private void setNextSegment(long segmentId, Segment segment) throws IOException {
                 Segment segment1 = m_latestSegments.get(segmentId);
                 if (segment1 == null) {
                     if (segmentId > m_maxSegmentId) {
@@ -470,9 +480,8 @@ public class LocalIndex implements Index {
                                 String.valueOf(segmentId) + ",max:" + String.valueOf(m_maxSegmentId));
                     }
                 }
-
-                return segment;
             }
+
 
             private void removeOldSegment() throws IOException {
                 Entry<Long, Segment> first = m_latestSegments.entrySet().iterator().next();
