@@ -192,7 +192,10 @@ public class LocalIndex implements Index {
                 m_caches.put(ip, cache);
             }
 
-            return cache.findOrCreateNextSegment(id);
+            Segment segment = cache.getNextSegment(id);
+            cache.setNextSegment(id, segment);
+            return segment;
+
         }
 
         private void init(File indexPath) throws IOException {
