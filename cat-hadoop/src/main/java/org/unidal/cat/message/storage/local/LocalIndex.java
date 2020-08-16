@@ -71,6 +71,15 @@ public class LocalIndex implements Index {
         }
     }
 
+
+    public long get_m_maxSegmentId(MessageId id) throws IOException {
+        return m_index.get_m_maxSegmentId(id);
+    }
+
+    public long get_m_latestSegments_size(MessageId id) throws IOException {
+        return m_index.get_m_latestSegments_size(id);
+    }
+
     @Override
     public MessageId find(MessageId id) throws IOException {
         long value = m_index.read(id);
@@ -208,6 +217,14 @@ public class LocalIndex implements Index {
 
         private boolean isOpen() {
             return m_file != null;
+        }
+
+        private long get_m_maxSegmentId(MessageId id) throws IOException {
+            return m_caches.get(id.getIpAddressInHex()).get_m_maxSegmentId(id);
+        }
+
+        private long get_m_latestSegments_size(MessageId id) throws IOException {
+            return m_caches.get(id.getIpAddressInHex()).get_m_latestSegments_size();
         }
 
         private long read(MessageId id) throws IOException {
@@ -421,6 +438,14 @@ public class LocalIndex implements Index {
                     segment.close();
                 }
                 m_latestSegments.clear();
+            }
+
+            private long get_m_maxSegmentId(MessageId id) throws IOException {
+                return m_maxSegmentId;
+            }
+
+            private long get_m_latestSegments_size() throws IOException {
+                return m_latestSegments.size();
             }
 
             public Segment findOrCreateNextSegment(long segmentId) throws IOException {

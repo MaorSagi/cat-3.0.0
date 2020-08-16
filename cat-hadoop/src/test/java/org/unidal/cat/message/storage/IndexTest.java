@@ -23,6 +23,7 @@ import java.io.File;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.unidal.cat.message.storage.local.LocalIndex;
 import org.unidal.helper.Files;
 import org.unidal.lookup.ComponentTestCase;
 
@@ -86,12 +87,16 @@ public class IndexTest extends ComponentTestCase {
             for (int ip = 0; ip < 10; ip++) {
                 MessageId from = MessageId.parse("from-0a26000" + ip + "-403899-" + i);
                 MessageId expected = MessageId.parse("from-0a25000" + ip + "-403899-" + i);
-
+                long m_maxSegmentId_before = ((LocalIndex) index).get_m_maxSegmentId(from);
                 MessageId actual = index.find(from);
-
+                long m_maxSegmentId_after = ((LocalIndex) index).get_m_maxSegmentId(from);
+                Assert.assertNotSame(m_maxSegmentId_before, m_maxSegmentId_after);
+                Assert.assertTrue(((LocalIndex) index).get_m_latestSegments_size(from) <= 2);
                 Assert.assertEquals(expected, actual);
             }
         }
+
+
     }
 
 }
