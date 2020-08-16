@@ -456,7 +456,7 @@ public class LocalIndex implements Index {
                     }
                 }
 
-                segment = m_latestSegments.get(segmentId);
+                Segment segment1 = m_latestSegments.get(segmentId);
                 if (segment == null) {
                     if (segmentId > m_maxSegmentId) {
                         if (m_latestSegments.size() >= CACHE_SIZE) {
