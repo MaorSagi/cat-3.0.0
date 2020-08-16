@@ -450,15 +450,18 @@ public class LocalIndex implements Index {
 
             public Segment findOrCreateNextSegment(long segmentId) throws IOException {
                 Segment segment = m_latestSegments.get(segmentId);
+                if (segment == null) {
+                    if (segmentId > m_maxSegmentId) {
+                        segment = new Segment(m_indexChannel, segmentId * SEGMENT_SIZE);
+                    }
+                }
 
+                segment = m_latestSegments.get(segmentId);
                 if (segment == null) {
                     if (segmentId > m_maxSegmentId) {
                         if (m_latestSegments.size() >= CACHE_SIZE) {
                             removeOldSegment();
                         }
-
-                        segment = new Segment(m_indexChannel, segmentId * SEGMENT_SIZE);
-
                         m_latestSegments.put(segmentId, segment);
                         m_maxSegmentId = segmentId;
                     } else {
